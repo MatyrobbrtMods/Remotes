@@ -1,0 +1,9 @@
+{
+  "cm.remotes.dimension404": "Dimension %s no longer exists!",
+  "tooltip.remotes.target": "Linked to block at %s, %s, %s in %s",
+
+  "tooltip.remotes.no_target1": "Not linked to any block!",
+  "tooltip.remotes.no_target2": "Shift-click a block to bind.",
+
+  "item.remotes.block_remote": "Block Remote"
+}
