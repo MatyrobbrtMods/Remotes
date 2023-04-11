@@ -3,8 +3,7 @@ ModsDotGroovy.make {
     loaderVersion = '[40,)'
 
     license = 'MIT'
-    // A URL to refer people to when problems occur with this mod
-    issueTrackerUrl = 'https://change.me.to.your.issue.tracker.example.invalid/'
+    issueTrackerUrl = 'https://github.com/MatyrobbrtMods/Remotes/issues'
 
     mod {
         modId = 'remotes'
