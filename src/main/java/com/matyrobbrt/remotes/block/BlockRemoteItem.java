@@ -1,5 +1,6 @@
 package com.matyrobbrt.remotes.block;
 
+import com.matyrobbrt.remotes.RemotesConfig;
 import net.minecraft.ChatFormatting;
 import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -40,11 +42,15 @@ public class BlockRemoteItem extends Item {
     @Override
     public InteractionResult useOn(UseOnContext pContext) {
         if (pContext.getPlayer().isShiftKeyDown()) {
-            if (!pContext.getLevel().isClientSide)
-                pContext.getItemInHand().getOrCreateTag().put(LINKED_BLOCK, new BlockTarget(
-                        pContext.getClickedPos(), pContext.getClickedFace(),
-                        pContext.getLevel().dimension(), pContext.getLevel().getBlockState(pContext.getClickedPos())
-                ).toNBT());
+            if (!pContext.getLevel().isClientSide) {
+                final BlockState clickedState = pContext.getLevel().getBlockState(pContext.getClickedPos());
+                if (check(clickedState, pContext.getPlayer())) {
+                    pContext.getItemInHand().getOrCreateTag().put(LINKED_BLOCK, new BlockTarget(
+                            pContext.getClickedPos(), pContext.getClickedFace(),
+                            pContext.getLevel().dimension(), clickedState
+                    ).toNBT());
+                }
+            }
             return InteractionResult.CONSUME;
         }
         return InteractionResult.PASS;
@@ -66,6 +72,8 @@ public class BlockRemoteItem extends Item {
                 final AbstractContainerMenu oldInventory = pPlayer.containerMenu;
 
                 final BlockState state = target.getBlockState(blockTarget.pos());
+                if (!check(state, pPlayer)) return InteractionResultHolder.fail(stack);
+
                 state.use(target, pPlayer, pUsedHand, new BlockHitResult(Vec3.atCenterOf(blockTarget.pos()), blockTarget.direction(), blockTarget.pos(), false));
 
                 if (oldInventory != pPlayer.containerMenu) { // We've changed inventories
@@ -98,5 +106,14 @@ public class BlockRemoteItem extends Item {
             return true;
         }
         return original;
+    }
+
+    public static boolean check(BlockState state, Player player) {
+        final String blockId = Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(state.getBlock())).toString();
+        if (RemotesConfig.BLACKLISTED_BLOCKS.get().contains(blockId)) {
+            player.displayClientMessage(new TranslatableComponent("cm.remotes.cannot_interact_with_block", new TextComponent(blockId).withStyle(ChatFormatting.GOLD)), true);
+            return false;
+        }
+        return true;
     }
 }

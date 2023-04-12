@@ -1,0 +1,1 @@
+Add a config to blacklist blocks from being interacted with remotely.

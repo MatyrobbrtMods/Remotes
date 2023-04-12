@@ -1,5 +1,7 @@
 {
   "cm.remotes.dimension404": "Dimension %s no longer exists!",
+  "cm.remotes.cannot_interact_with_block": "Cannot interact with blocks of type %s remotely!",
+
   "tooltip.remotes.target": "Linked to block at %s, %s, %s in %s",
 
   "tooltip.remotes.no_target1": "Not linked to any block!",

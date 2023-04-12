@@ -1,3 +1,5 @@
+import net.darkhax.curseforgegradle.TaskPublishCurseForge
+
 plugins {
     id 'eclipse'
     id 'maven-publish'
@@ -5,6 +7,7 @@ plugins {
     id 'io.github.groovymc.modsdotgroovy' version '1.1.2'
     id 'org.parchmentmc.librarian.forgegradle' version '1.+'
     id 'org.spongepowered.mixin' version '0.7.+'
+    id 'net.darkhax.curseforgegradle' version '1.0.11'
 }
 
 group = 'com.matyrobbrt.remotes'
@@ -26,7 +29,7 @@ minecraft {
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
     runs {
-        all {
+        configureEach {
             workingDirectory project.file('run')
 
             property 'forge.logging.markers', 'REGISTRIES'
@@ -71,6 +74,17 @@ dependencies {
     implementation(jarJar("com.github.llamalad7.mixinextras:mixinextras-forge:${mixinExtrasVersion}")) {
         jarJar.ranged(it, "[${mixinExtrasVersion},)")
     }
+}
+
+tasks.register('publishCurseForge', TaskPublishCurseForge).configure {
+    it.apiToken = project.findProperty('curseforgeKey')
+    it.upload('849348', tasks.jarJar).tap {
+        changelogType = 'markdown'
+        changelog = file('changelog.txt').getText()
+        releaseType = project.findProperty('releaseType')
+        addJavaVersion 'Java 17'
+    }
+    it.dependsOn(tasks.jarJar)
 }
 
 final manifestAttributes = [
