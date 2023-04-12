@@ -85,7 +85,7 @@ tasks.register('publishCurseForge', TaskPublishCurseForge).configure {
         releaseType = project.findProperty('releaseType')
         addJavaVersion 'Java 17'
     }
-    it.dependsOn(tasks.jarJar)
+    it.dependsOn(tasks.jar)
 }
 
 final manifestAttributes = [
