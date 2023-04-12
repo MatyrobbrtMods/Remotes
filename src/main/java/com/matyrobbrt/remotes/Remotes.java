@@ -30,7 +30,7 @@ public class Remotes {
     private static final Logger LOGGER = LogUtils.getLogger();
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, MOD_ID);
 
-    public static final RegistryObject<Item> BLOCK_REMOTE = ITEMS.register("block_remote", () -> new BlockRemoteItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
+    public static final RegistryObject<Item> BLOCK_REMOTE = ITEMS.register("block_remote", () -> new BlockRemoteItem(new Item.Properties().tab(CreativeModeTab.TAB_MISC).stacksTo(1)));
 
     public Remotes() {
         final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
