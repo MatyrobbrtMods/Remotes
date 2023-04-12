@@ -6,8 +6,6 @@ import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -65,7 +63,7 @@ public class BlockRemoteItem extends Item {
             return BlockTarget.fromNBT(c.getCompound(LINKED_BLOCK)).map(blockTarget -> {
                 final Level target = Objects.requireNonNull(pLevel.getServer()).getLevel(blockTarget.dimension());
                 if (target == null) {
-                    pPlayer.displayClientMessage(new TranslatableComponent("cm.remotes.dimension404", new TextComponent(blockTarget.dimension().location().toString()).withStyle(ChatFormatting.AQUA)), false);
+                    pPlayer.displayClientMessage(Component.translatable("cm.remotes.dimension404", Component.literal(blockTarget.dimension().location().toString()).withStyle(ChatFormatting.AQUA)), false);
                     return InteractionResultHolder.fail(stack);
                 }
 
@@ -77,7 +75,9 @@ public class BlockRemoteItem extends Item {
                 state.use(target, pPlayer, pUsedHand, new BlockHitResult(Vec3.atCenterOf(blockTarget.pos()), blockTarget.direction(), blockTarget.pos(), false));
 
                 if (oldInventory != pPlayer.containerMenu) { // We've changed inventories
-                    ((BlockRemotesPlayer) pPlayer).remotes$markRemoteOpened(true);
+                    final BlockRemotesPlayer brp = (BlockRemotesPlayer) pPlayer;
+                    brp.remotes$markRemoteOpened(true);
+                    brp.remotes$setRemoteSlotIndex(pUsedHand == InteractionHand.MAIN_HAND ? pPlayer.getInventory().selected : -1);
                 }
 
                 c.put(LINKED_BLOCK, blockTarget.withState(state).toNBT());
@@ -91,8 +91,8 @@ public class BlockRemoteItem extends Item {
     @Override
     public void appendHoverText(ItemStack pStack, @Nullable Level pLevel, List<Component> pTooltipComponents, TooltipFlag pIsAdvanced) {
         if (Optional.ofNullable(pStack.getTag()).flatMap(tag -> BlockTarget.fromNBT(tag.getCompound(LINKED_BLOCK))).isEmpty()) {
-            pTooltipComponents.add(new TranslatableComponent("tooltip.remotes.no_target1").withStyle(ChatFormatting.GOLD));
-            pTooltipComponents.add(new TranslatableComponent("tooltip.remotes.no_target2").withStyle(ChatFormatting.AQUA));
+            pTooltipComponents.add(Component.translatable("tooltip.remotes.no_target1").withStyle(ChatFormatting.GOLD));
+            pTooltipComponents.add(Component.translatable("tooltip.remotes.no_target2").withStyle(ChatFormatting.AQUA));
         }
     }
 
@@ -101,17 +101,10 @@ public class BlockRemoteItem extends Item {
         return Optional.ofNullable(pStack.getTag()).flatMap(tag -> BlockTarget.fromNBT(tag.getCompound(LINKED_BLOCK)));
     }
 
-    public static boolean containerValid(Player player, boolean original) {
-        if (((BlockRemotesPlayer) player).remotes$isRemoteOpened()) {
-            return true;
-        }
-        return original;
-    }
-
     public static boolean check(BlockState state, Player player) {
         final String blockId = Objects.requireNonNull(ForgeRegistries.BLOCKS.getKey(state.getBlock())).toString();
         if (RemotesConfig.BLACKLISTED_BLOCKS.get().contains(blockId)) {
-            player.displayClientMessage(new TranslatableComponent("cm.remotes.cannot_interact_with_block", new TextComponent(blockId).withStyle(ChatFormatting.GOLD)), true);
+            player.displayClientMessage(Component.translatable("cm.remotes.cannot_interact_with_block", Component.literal(blockId).withStyle(ChatFormatting.GOLD)), true);
             return false;
         }
         return true;

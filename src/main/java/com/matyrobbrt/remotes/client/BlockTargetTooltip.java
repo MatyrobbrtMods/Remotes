@@ -9,8 +9,6 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipComponent
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.item.ItemStack;
 
 import javax.annotation.ParametersAreNonnullByDefault;
@@ -18,12 +16,12 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public record BlockTargetTooltip(BlockTarget target, Component message, ItemStack renderInstance) implements ClientTooltipComponent {
     public BlockTargetTooltip(BlockTarget target) {
-        this(target, new TranslatableComponent("tooltip.remotes.target",
-                new TextComponent(String.valueOf(target.pos().getX())).withStyle(ChatFormatting.AQUA),
-                new TextComponent(String.valueOf(target.pos().getY())).withStyle(ChatFormatting.AQUA),
-                new TextComponent(String.valueOf(target.pos().getZ())).withStyle(ChatFormatting.AQUA),
+        this(target, Component.translatable("tooltip.remotes.target",
+                Component.literal(String.valueOf(target.pos().getX())).withStyle(ChatFormatting.AQUA),
+                Component.literal(String.valueOf(target.pos().getY())).withStyle(ChatFormatting.AQUA),
+                Component.literal(String.valueOf(target.pos().getZ())).withStyle(ChatFormatting.AQUA),
 
-                new TextComponent(target.dimension().location().toString()).withStyle(ChatFormatting.DARK_PURPLE)
+                Component.literal(target.dimension().location().toString()).withStyle(ChatFormatting.DARK_PURPLE)
         ).withStyle(ChatFormatting.GOLD), target.rememberedState().getBlock().asItem().getDefaultInstance());
     }
 

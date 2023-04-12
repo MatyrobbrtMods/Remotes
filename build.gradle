@@ -24,7 +24,7 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 println "Java: ${System.getProperty 'java.version'}, JVM: ${System.getProperty 'java.vm.version'} (${System.getProperty 'java.vendor'}), Arch: ${System.getProperty 'os.arch'}"
 minecraft {
-    mappings channel: 'parchment', version: '2022.11.06-1.18.2'
+    mappings channel: 'parchment', version: '2022.11.27-1.19.2'
 
     // accessTransformer = file('src/main/resources/META-INF/accesstransformer.cfg')
 
@@ -64,21 +64,22 @@ repositories {
     }
 }
 
-jarJar.enable()
+// jarJar.enable()
 
 dependencies {
-    minecraft 'net.minecraftforge:forge:1.18.2-40.1.61'
+    minecraft 'net.minecraftforge:forge:1.19.2-43.1.55'
     annotationProcessor 'org.spongepowered:mixin:0.8.5:processor'
 
-    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${mixinExtrasVersion}"))
-    implementation(jarJar("com.github.llamalad7.mixinextras:mixinextras-forge:${mixinExtrasVersion}")) {
-        jarJar.ranged(it, "[${mixinExtrasVersion},)")
-    }
+//    We no longer need mixinextras
+//    implementation(annotationProcessor("com.github.llamalad7.mixinextras:mixinextras-common:${mixinExtrasVersion}"))
+//    implementation(jarJar("com.github.llamalad7.mixinextras:mixinextras-forge:${mixinExtrasVersion}")) {
+//        jarJar.ranged(it, "[${mixinExtrasVersion},)")
+//    }
 }
 
 tasks.register('publishCurseForge', TaskPublishCurseForge).configure {
     it.apiToken = project.findProperty('curseforgeKey')
-    it.upload('849348', tasks.jarJar).tap {
+    it.upload('849348', tasks.jar).tap {
         changelogType = 'markdown'
         changelog = file('changelog.txt').getText()
         releaseType = project.findProperty('releaseType')
@@ -100,7 +101,7 @@ final manifestAttributes = [
 jar {
     manifest.attributes(manifestAttributes)
     finalizedBy('reobfJar')
-    archiveClassifier.set('slim')
+    // archiveClassifier.set('slim')
 }
 
 tasks.jarJar {

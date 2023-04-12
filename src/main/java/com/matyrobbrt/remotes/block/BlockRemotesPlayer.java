@@ -6,4 +6,7 @@ import org.jetbrains.annotations.ApiStatus;
 public interface BlockRemotesPlayer {
     void remotes$markRemoteOpened(boolean remoteOpened);
     boolean remotes$isRemoteOpened();
+
+    void remotes$setRemoteSlotIndex(int remoteIndex);
+    int remotes$getRemoteSlotIndex();
 }

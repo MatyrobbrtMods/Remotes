@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.Unique;
 public class PlayerMixin implements BlockRemotesPlayer {
     @Unique
     private boolean remotes$remoteOpened;
+    @Unique
+    private int remotes$remoteSlotIndex;
 
     @Unique
     @Override
@@ -20,5 +22,15 @@ public class PlayerMixin implements BlockRemotesPlayer {
     @Override
     public boolean remotes$isRemoteOpened() {
         return this.remotes$remoteOpened;
+    }
+
+    @Override
+    public int remotes$getRemoteSlotIndex() {
+        return remotes$remoteSlotIndex;
+    }
+
+    @Override
+    public void remotes$setRemoteSlotIndex(int remoteIndex) {
+        this.remotes$remoteSlotIndex = remoteIndex;
     }
 }
